@@ -1,0 +1,43 @@
+@startuml
+
+title Diagrama de Clases
+
+@enduml
+
+
+class Prenda { 
+    material
+    color
+    colorSecundario
+}
+
+class TipoPrenda {
+    nombre
+    categoriasAsociadas
+}
+
+enum Categoria {
+    PARTE_SUPERIOR,
+    PARTE_INFERIOR,
+    CALZADO,
+    ACCESORIOS
+}
+
+class Atuendo {
+    parteSuperior
+    parteInferior
+    calzado
+    accesorios
+}
+
+class Usuario {
+    atuendos
+}
+
+Prenda -down-- TipoPrenda
+
+Atuendo -    Prenda
+
+TipoPrenda -    Categoria
+
+Usuario -    Atuendo

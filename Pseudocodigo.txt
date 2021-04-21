@@ -1,0 +1,35 @@
+// Explicacion
+
+Puse la Categoria como enum porque por ahora es solamente parte superior, parte inferior, calzado y accesorios. Segun entiendo por el enunciado, el usuario no va a poder agregar otra categoria.
+
+En cambio, el tipo de prenda, como dice "zapatos, camisa de mangas cortas, pantalón, etc", entendí que el usuario puede ir agregando categorias a su gusto.
+
+Para cumplir con el requerimiento de evitar que haya prendas cuya categoria no se condiga con su tipo, a la clase de TipoPrenda le agregue una lista de Categorias. De esta forma, el usuario al momento de crear un nuevo tipo, tendra que poner a que tipo de categoria/s corresponde. Por ejemplo, si agrega el tipo "zapatos", se relacionara con CALZADO. Asi, nunca quedara una prenda que tenga un tipo que no se condiga con la categoria, ya que el tipo dependera de esa categoria.
+
+
+
+// Pseudocodigo 
+
+class Prenda 
+	variable material // no nula
+	variable color // no nula
+	variable colorSecundario
+	variable tipo // TipoPrenda
+
+class TipoPrenda
+	variable nombre
+	variable categoriasAsociadas // lista de enum Categoria
+
+enum Categoria
+	PARTE_SUPERIOR, PARTE_INFERIOR, CALZADO, ACCESORIOS
+
+class Atuendo
+	variable parteSuperior
+	variable parteInferior
+	variable calzado
+	variable accesorios
+
+class Usuario
+	variable atuendos
+
+
