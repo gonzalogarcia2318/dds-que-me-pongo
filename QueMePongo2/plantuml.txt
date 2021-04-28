@@ -1,0 +1,74 @@
+@startuml
+
+title Diagrama de Clases
+
+@enduml
+
+
+class Prenda { 
+    material
+    color
+    colorSecundario
+    borrador
+}
+
+class TipoPrenda {
+    nombre
+    categoria
+}
+
+Prenda -down-> TipoPrenda
+
+enum Categoria {
+    PARTE_SUPERIOR,
+    PARTE_INFERIOR,
+    CALZADO,
+    ACCESORIOS
+}
+
+TipoPrenda -> Categoria
+
+class Tela {
+    nombre
+    trama
+}
+
+Prenda -> Tela
+
+enum TipoTrama {
+    LISA,
+    RAYADA,
+    CON_LUNARES,
+    A_CUADROS,
+    ESTAMPADO
+}
+
+
+Tela -> TipoTrama
+
+class Atuendo {
+    parteSuperior
+    parteInferior
+    calzado
+    accesorios
+}
+
+Atuendo -down-> "*" Prenda
+
+enum Material {
+    ALGODON,
+    JEAN,
+    CUERO
+}
+
+Prenda -up-> Material
+
+
+class Uniforme {
+    parteSuperior
+    parteInferior
+    calzado
+    institucion
+}
+
+Uniforme -> "*" Prenda
