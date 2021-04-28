@@ -60,6 +60,9 @@ class Atuendo
 	Prenda calzado
 	List<Prenda> accesorios
 
+enum Material
+	ALGODON, JEAN, CUERO
+
 // Clase Color para manejar los colores en rgb (Correcion 1º iteracion)
 class Color
 	Integer r
