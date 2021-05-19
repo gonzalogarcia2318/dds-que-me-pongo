@@ -1,0 +1,147 @@
+// Explicación/Aclaraciones
+
+// Primera Iteración
+
+Puse la Categoria como enum porque por ahora es solamente parte superior, parte inferior, calzado y accesorios.
+Segun entiendo por el enunciado, el usuario no va a poder agregar otra categoria.
+
+En cambio, el tipo de prenda, como dice "zapatos, camisa de mangas cortas, pantalón, etc",
+entendí que el usuario puede ir agregando categorias a su gusto.
+
+// Segunda Iteración
+
+Correcciones:
+
+Borrador es una clase que se usa como Builder de Prenda. Tiene una prenda intermedia
+con los mismos atributos que prenda pero puede irse creando de a poco, y cuando esta lista
+se llama a crearPrenda(): Prenda
+
+Agrupé enum Material y enum Trama en clase Material asi se maneja mas facilmente.
+
+Para la parte de Uniforme, sigue siendo una clase aparte con las partes requeridas, pero
+la creacion se hace usando el parton Factory Method mediante un Sastre.
+Hay una clase abstracta Sastre que se encarga de crear el unifome delegando metodos que
+crean las partes individuales en clases hijas dependiendo de que Sastre (Colegio) este
+creando el uniforme.
+
+// Pseudocodigo 
+
+class Prenda 
+	TipoPrenda tipo 
+	Material material
+	Color color
+	Color colorSecundario // opcional
+
+	public Prenda(TipoPrenda tipo, Material material, Color color)
+		this.tipo = tipo
+		....
+
+	public Prenda(TipoPrenda tipo, Material material, Color color, Color colorSecundario)
+		this.tipo = tipo
+		...
+		this.colorSecundario = colorSecundario
+
+class TipoPrenda
+	String nombre
+	Categoria categoria
+
+enum Categoria
+	PARTE_SUPERIOR, PARTE_INFERIOR, CALZADO, ACCESORIOS
+
+class Atuendo
+	Prenda parteSuperior
+	Prenda parteInferior
+	Prenda calzado
+	List<Prenda> accesorios
+
+class Material
+	TipoMaterial tipoMaterial
+	Trama trama
+
+enum TipoMaterial
+	ALGODON, JEAN, CUERO
+
+enum Trama
+	LISA, RAYADA, CON_LUNARES, A_CUADROS, ESTAMPADO
+
+// Clase Color para manejar los colores en rgb (Correcion 1º iteracion)
+class Color
+	Integer r
+	Integer g
+	Integer b
+
+
+// Borrador: builder de Prenda
+
+class Borrador 
+	TipoPrenda tipo 
+	Material material
+	Color color
+	Color colorSecundario // opcional
+
+	// devuelve this para interfaz fluida
+	public Borrador especificarTipoPrenda(TipoPrenda tipo)
+		this.tipo = tipo
+
+	public Borrador especificarMaterial(Material material)
+		this.material = material
+
+	public Borrador especificarColor(Color color)
+	this.color = color;
+
+	public Borrador especificarColorSecundario(Color colorSecundario)
+		this.colorSecundario = colorSecundario
+
+	public Prenda crearPrenda()
+		return new Prenda(this.tipo, this.material, this.color, this.colorSecundario)
+
+
+class Uniforme
+	Prenda parteSuperior
+	Prenda parteInferior
+	Prenda calzado
+
+
+abstract class Sastre
+
+	public Uniforme fabricarUniforme(){
+		return new Uniforme(
+			this.fabricarParteSuperior,
+			this.fabricarParteInferior,
+			this.fabricarCalzado)
+	}
+
+	protected abstract fabricarParteSuperior();
+
+	protected abstract fabricarParteInferior();
+
+	protected abstract fabricarCalzado();
+
+class SastreSanJuan extends Sastre
+	
+	public Prenda fabricarParteSuperior(){
+		... // crear prenda a traves de borrador
+		return borrador.crearPrenda()
+	}
+
+
+	public Prenda fabricarParteInferior(){
+		... // crear prenda a traves de borrador
+		return borrador.crearPrenda()
+	}
+
+
+	public Prenda fabricarCalzado(){
+		... // crear prenda a traves de borrador
+		return borrador.crearPrenda()
+	}
+
+// Se pueden ir agregando Sastres segun instituciones
+
+class SastreJohnson extends Sastre
+	
+	public Prenda fabricarParteSuperior()
+
+	public Prenda fabricarParteInferior()
+
+	public Prenda fabricarCalzado()

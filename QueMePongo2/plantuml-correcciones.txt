@@ -1,0 +1,107 @@
+@startuml
+
+title Diagrama de Clases
+
+@enduml
+
+
+class Prenda { 
+    tipoPrenda
+    material
+    color
+    colorSecundario
+}
+
+class TipoPrenda {
+    nombre
+    categoria
+}
+
+Prenda -down-> TipoPrenda
+
+enum Categoria {
+    PARTE_SUPERIOR,
+    PARTE_INFERIOR,
+    CALZADO,
+    ACCESORIOS
+}
+
+TipoPrenda -> Categoria
+
+class Material {
+    tipoMaterial
+    trama
+}
+
+enum TipoMaterial {
+    ALGODON, JEAN, CUERO
+}
+
+enum Trama {
+    LISA,
+    RAYADA,
+    CON_LUNARES,
+    A_CUADROS,
+    ESTAMPADO
+}
+
+Material -left> TipoMaterial
+Material -left> Trama
+
+class Borrador {
+    tipoPrenda
+    material
+    color
+    colorSecundario
+    
+    crearPrenda()
+    especificarTipoPrenda()
+    especificarMaterial()
+    especificarColor()
+    especificarColorSecundario()
+}
+
+Borrador -.left-> Prenda
+
+class Atuendo {
+    parteSuperior
+    parteInferior
+    calzado
+    accesorios
+}
+
+Atuendo -down-> "*" Prenda
+
+Prenda -up-> Material
+
+class Uniforme {
+    parteSuperior
+    parteInferior
+    calzado
+}
+
+Uniforme -> "*" Prenda
+
+abstract class Sastre {
+    fabricarUniforme()
+    {abstract} fabricarParteSuperior()
+    {abstract} fabricarParteInferior()
+    {abstract} fabricarCalzado()
+}
+
+Sastre -.right-> Uniforme
+
+class SastreSanJuan {
+    fabricarParteSuperior()
+    fabricarParteInferior()
+    fabricarCalzado()
+}
+
+class SastreJohnson {
+    fabricarParteSuperior()
+    fabricarParteInferior()
+    fabricarCalzado()
+}
+
+SastreSanJuan -up-|> Sastre
+SastreJohnson -up-|> Sastre
