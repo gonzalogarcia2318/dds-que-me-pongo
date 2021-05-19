@@ -1,0 +1,167 @@
+// Explicación/Aclaraciones
+
+// Pseudocodigo 
+
+class Prenda 
+	TipoPrenda tipo 
+	Material material
+	Color color
+	Color colorSecundario // opcional
+
+	Double temperaturaMaxima // maxima temperatura para usar una prenda
+
+	public Prenda(TipoPrenda tipo, Material material, Color color, Double temperaturaMaxima)
+		this.tipo = tipo
+		....
+
+	public Prenda(TipoPrenda tipo, Material material, Color color, Color colorSecundario, Double temperaturaMaxima)
+		this.tipo = tipo
+		...
+		this.colorSecundario = colorSecundario
+
+class TipoPrenda
+	String nombre
+	Categoria categoria
+
+enum Categoria
+	PARTE_SUPERIOR, PARTE_INFERIOR, CALZADO, ACCESORIOS
+
+class Atuendo
+	Prenda parteSuperior
+	Prenda parteInferior
+	Prenda calzado
+	List<Prenda> accesorios
+
+class Material
+	TipoMaterial tipoMaterial
+	Trama trama
+
+enum TipoMaterial
+	ALGODON, JEAN, CUERO
+
+enum Trama
+	LISA, RAYADA, CON_LUNARES, A_CUADROS, ESTAMPADO
+
+// Clase Color para manejar los colores en rgb (Correcion 1º iteracion)
+class Color
+	Integer r
+	Integer g
+	Integer b
+
+
+// Borrador: builder de Prenda
+
+class Borrador 
+	TipoPrenda tipo 
+	Material material
+	Color color
+	Color colorSecundario // opcional
+
+	// devuelve this para interfaz fluida
+	public Borrador especificarTipoPrenda(TipoPrenda tipo)
+		this.tipo = tipo
+
+	public Borrador especificarMaterial(Material material)
+		this.material = material
+
+	public Borrador especificarColor(Color color)
+	this.color = color;
+
+	public Borrador especificarColorSecundario(Color colorSecundario)
+		this.colorSecundario = colorSecundario
+
+	public Prenda crearPrenda()
+		return new Prenda(this.tipo, this.material, this.color, this.colorSecundario)
+
+
+class Uniforme
+	Prenda parteSuperior
+	Prenda parteInferior
+	Prenda calzado
+
+
+abstract class Sastre
+
+	public Uniforme fabricarUniforme(){
+		return new Uniforme(
+			this.fabricarParteSuperior,
+			this.fabricarParteInferior,
+			this.fabricarCalzado)
+	}
+
+	protected abstract fabricarParteSuperior();
+
+	protected abstract fabricarParteInferior();
+
+	protected abstract fabricarCalzado();
+
+class SastreSanJuan extends Sastre
+	
+	public Prenda fabricarParteSuperior(){
+		... // crear prenda a traves de borrador
+		return borrador.crearPrenda()
+	}
+
+
+	public Prenda fabricarParteInferior(){
+		... // crear prenda a traves de borrador
+		return borrador.crearPrenda()
+	}
+
+
+	public Prenda fabricarCalzado(){
+		... // crear prenda a traves de borrador
+		return borrador.crearPrenda()
+	}
+
+// Se pueden ir agregando Sastres segun instituciones
+
+class SastreJohnson extends Sastre
+	
+	public Prenda fabricarParteSuperior()
+
+	public Prenda fabricarParteInferior()
+
+	public Prenda fabricarCalzado()
+
+
+// Recomendador de atuendos - Cuarta Iteracion
+
+class RecomendadorAtuendos 
+	
+	public Atuendo sugerirAtuendo()
+		// sugerira un atuendo segun las condiciones climaticas
+
+
+class CondicionesClimaticas 
+	Double temperaturaMin
+	Double temperaturaMax
+	Double humedad
+	Double probabilidadLluvia
+
+
+interface IServicioClima
+	public CondicionesClimaticas obtenerCondicionesClimaticas()
+
+class ServicioClima implements IServicioClima
+	
+	String ciudad
+	AccuWeatherAPI climaAPI
+
+	public CondicionesClimaticas obtenerCondicionesClimaticas()
+		climaAPI.getWeather(this.ciudad)
+		return this.parseDataToCondicionesClimaticas()
+
+	private CondicionesClimaticas parseDataToCondicionesClimaticas(List<Map<String, Object> accuWeatherData)
+		CondicionesClimaticas condicionesClimaticas = new CondicionesClimaticas()
+		// agarra cada atributo del clima provisto por AccuWeather y lo pasa a 
+		// CondicionesClimaticas
+		return condicionesClimaticas 
+
+
+// Para el requerimiento:
+"Como stakeholder de QuéMePongo, quiero poder asegurar la calidad de mi aplicación sin incurrir en costos innecesarios."
+
+Se podria hacer que durante un tiempo (menos de 12h que es el rango de tiempo 
+para el que nos da el clima la API de AccuWeather), no se vuelva a llamar a la API, y 
+seguir usando los mismos valores? 

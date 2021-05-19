@@ -1,0 +1,48 @@
+@startuml
+
+title Diagrama de Clases (Parte Recomendador)
+
+@enduml
+
+
+class Atuendo {
+    parteSuperior
+    parteInferior
+    calzado
+    accesorios
+}
+
+class RecomendadorAtuendos {
+    sugerirAtuendo()
+}
+
+RecomendadorAtuendos -.> Atuendo
+
+class CondicionesClimaticas {
+    temperaturaMin
+    temperaturaMax
+    humedad
+    probabilidadLluvia
+}
+
+interface IServicioClima {
+    obtenerCondicionesClimaticas()
+}
+
+IServicioClima -up.> CondicionesClimaticas
+
+RecomendadorAtuendos -right.> IServicioClima
+
+class ServicioClima {
+    ciudad
+    
+    obtenerCondicionesClimaticas()
+}
+
+ServicioClima -.up|> IServicioClima
+
+interface AccuWeatherAPI { 
+    getWeather(city)
+}
+
+ServicioClima -right.> AccuWeatherAPI
