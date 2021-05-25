@@ -19,9 +19,7 @@ class RecomendadorAtuendos {
 RecomendadorAtuendos -.> Atuendo
 
 class CondicionesClimaticas {
-    temperaturaMin
-    temperaturaMax
-    humedad
+    temperatura
     probabilidadLluvia
 }
 

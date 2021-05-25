@@ -134,9 +134,7 @@ class RecomendadorAtuendos
 
 
 class CondicionesClimaticas 
-	Double temperaturaMin
-	Double temperaturaMax
-	Double humedad
+	Double temperatura
 	Double probabilidadLluvia
 
 

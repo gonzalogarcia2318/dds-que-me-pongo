@@ -4,44 +4,24 @@ import java.math.BigDecimal;
 
 public class CondicionesClimaticas {
 
-  private BigDecimal temperaturaMin;
-  private BigDecimal temperaturaMax;
-  private BigDecimal humedad;
+  private BigDecimal temperatura;
   private BigDecimal probabilidadLluvia;
 
-  public CondicionesClimaticas(){
+  public CondicionesClimaticas() {
 
   }
 
-  public CondicionesClimaticas(BigDecimal temperaturaMin, BigDecimal temperaturaMax, BigDecimal humedad, BigDecimal probabilidadLluvia) {
-    this.temperaturaMin = temperaturaMin;
-    this.temperaturaMax = temperaturaMax;
-    this.humedad = humedad;
+  public CondicionesClimaticas(BigDecimal temperatura, BigDecimal probabilidadLluvia) {
+    this.temperatura = temperatura;
     this.probabilidadLluvia = probabilidadLluvia;
   }
 
-  public BigDecimal getTemperaturaMin() {
-    return temperaturaMin;
+  public BigDecimal getTemperatura() {
+    return temperatura;
   }
 
-  public void setTemperaturaMin(BigDecimal temperaturaMin) {
-    this.temperaturaMin = temperaturaMin;
-  }
-
-  public BigDecimal getTemperaturaMax() {
-    return temperaturaMax;
-  }
-
-  public void setTemperaturaMax(BigDecimal temperaturaMax) {
-    this.temperaturaMax = temperaturaMax;
-  }
-
-  public BigDecimal getHumedad() {
-    return humedad;
-  }
-
-  public void setHumedad(BigDecimal humedad) {
-    this.humedad = humedad;
+  public void setTemperatura(BigDecimal temperatura) {
+    this.temperatura = temperatura;
   }
 
   public BigDecimal getProbabilidadLluvia() {
