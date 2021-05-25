@@ -140,17 +140,22 @@ class CondicionesClimaticas
 	Double probabilidadLluvia
 
 
-interface IServicioClima
+interface ServicioClima
 	public CondicionesClimaticas obtenerCondicionesClimaticas()
 
-class ServicioClima implements IServicioClima
+class ServicioClimaAccuWeatherAPI implements IServicioClima
 	
 	String ciudad
 	AccuWeatherAPI climaAPI
 
+	// Inyecto dependencia para poder testear
+	public ServicioClimaAccuWeatherAPI(String ciudad, AccuWeatherAPI api)
+		this.ciudad = ciudad
+		this.climaAPI = api
+
 	public CondicionesClimaticas obtenerCondicionesClimaticas()
-		climaAPI.getWeather(this.ciudad)
-		return this.parseDataToCondicionesClimaticas()
+		response = climaAPI.getWeather(this.ciudad)
+		return this.parseDataToCondicionesClimaticas(response)
 
 	private CondicionesClimaticas parseDataToCondicionesClimaticas(List<Map<String, Object> accuWeatherData)
 		CondicionesClimaticas condicionesClimaticas = new CondicionesClimaticas()

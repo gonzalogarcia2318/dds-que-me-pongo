@@ -25,24 +25,24 @@ class CondicionesClimaticas {
     probabilidadLluvia
 }
 
-interface IServicioClima {
+interface ServicioClima {
     obtenerCondicionesClimaticas()
 }
 
-IServicioClima -up.> CondicionesClimaticas
+ServicioClima -up.> CondicionesClimaticas
 
-RecomendadorAtuendos -right.> IServicioClima
+RecomendadorAtuendos -right.> ServicioClima
 
-class ServicioClima {
+class ServicioClimaAccuWeatherAPI {
     ciudad
     
     obtenerCondicionesClimaticas()
 }
 
-ServicioClima -.up|> IServicioClima
+ServicioClimaAccuWeatherAPI -.up|> ServicioClima
 
 interface AccuWeatherAPI { 
     getWeather(city)
 }
 
-ServicioClima -right.> AccuWeatherAPI
+ServicioClimaAccuWeatherAPI -right.> AccuWeatherAPI
