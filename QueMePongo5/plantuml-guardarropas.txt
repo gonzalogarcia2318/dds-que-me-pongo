@@ -1,0 +1,70 @@
+@startuml
+
+title Diagrama de Clases (Parte Guardarropas)
+
+@enduml
+
+
+' QUINTA ITERACION
+
+class Prenda { 
+    tipoPrenda
+    material
+    color
+    colorSecundario
+}
+
+abstract class Guardarropas{
+    usuarios
+    prendas
+    modificacionesPropuestas
+    historialModificaciones
+    
+    proponerModificacion(modificacion)
+    aceptarModificacion(modificacion)
+    rechazarModificacion(modificacion)
+    deshacerModificacion(modificacion)
+}
+
+class GuardarropasViajes{
+    prendas
+}
+
+class GuardarropasEntrecasa{
+    prendas
+}
+
+GuardarropasViajes -up-|> Guardarropas
+GuardarropasEntrecasa -up-|> Guardarropas
+
+
+interface ModificacionGuardarropas{
+    ejecutar(guardarropas)
+    deshacer(guardarropas)
+}
+
+class AgregarPrenda { 
+    prenda
+    ejecutar(guardarropas)
+    deshacer(guardarropas)
+}
+
+class SacarPrenda { 
+    prenda
+    ejecutar(guardarropas)
+    deshacer(guardarropas)
+}
+
+AgregarPrenda -.|> ModificacionGuardarropas
+SacarPrenda -.|> ModificacionGuardarropas
+
+Guardarropas -> "*" ModificacionGuardarropas
+
+class Usuario {
+    guardarropas
+}
+
+Usuario -down-> "*" Guardarropas
+Guardarropas -up-> "*" Usuario
+
+Guardarropas -up> "*" Prenda

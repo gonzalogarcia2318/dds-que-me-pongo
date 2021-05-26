@@ -160,6 +160,7 @@ abstract class Guardarropas{
     proponerModificacion(modificacion)
     aceptarModificacion(modificacion)
     rechazarModificacion(modificacion)
+    deshacerModificacion(modificacion)
 }
 
 class GuardarropasViajes{
