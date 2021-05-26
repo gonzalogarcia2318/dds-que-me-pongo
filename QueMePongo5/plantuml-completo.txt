@@ -1,0 +1,206 @@
+@startuml
+
+title Diagrama de Clases
+
+@enduml
+
+
+
+class Prenda { 
+    tipoPrenda
+    material
+    color
+    colorSecundario
+}
+
+class TipoPrenda {
+    nombre
+    categoria
+}
+
+Prenda -up-> TipoPrenda
+
+enum Categoria {
+    PARTE_SUPERIOR,
+    PARTE_INFERIOR,
+    CALZADO,
+    ACCESORIOS
+}
+
+TipoPrenda -up-> Categoria
+
+class Material {
+    tipoMaterial
+    trama
+}
+
+enum TipoMaterial {
+    ALGODON, JEAN, CUERO
+}
+
+enum Trama {
+    LISA,
+    RAYADA,
+    CON_LUNARES,
+    A_CUADROS,
+    ESTAMPADO
+}
+
+Material -up-> TipoMaterial
+Material -up-> Trama
+
+class Borrador {
+    tipoPrenda
+    material
+    color
+    colorSecundario
+    
+    crearPrenda()
+    especificarTipoPrenda()
+    especificarMaterial()
+    especificarColor()
+    especificarColorSecundario()
+}
+
+Borrador -.up> Prenda
+
+Prenda -up-> Material
+
+class Uniforme {
+    parteSuperior
+    parteInferior
+    calzado
+}
+
+Uniforme -left> "*" Prenda
+
+abstract class Sastre {
+    fabricarUniforme()
+    {abstract} fabricarParteSuperior()
+    {abstract} fabricarParteInferior()
+    {abstract} fabricarCalzado()
+}
+
+Sastre -.left-> Uniforme
+
+class SastreSanJuan {
+    fabricarParteSuperior()
+    fabricarParteInferior()
+    fabricarCalzado()
+}
+
+class SastreJohnson {
+    fabricarParteSuperior()
+    fabricarParteInferior()
+    fabricarCalzado()
+}
+
+SastreSanJuan -up-|> Sastre
+SastreJohnson -up-|> Sastre
+
+
+
+
+' CUARTA ITERACION
+
+class Atuendo {
+    parteSuperior
+    parteInferior
+    calzado
+    accesorios
+}
+
+Atuendo -> "*" Prenda
+
+
+class RecomendadorAtuendos {
+    sugerirAtuendo()
+}
+
+RecomendadorAtuendos -right.> Atuendo
+
+interface ServicioClima {
+    obtenerCondicionesClimaticas()
+}
+
+RecomendadorAtuendos -left.> ServicioClima
+
+
+class ServicioClimaAccuWeatherAPI {
+    ciudad
+    
+    obtenerCondicionesClimaticas()
+}
+
+ServicioClimaAccuWeatherAPI -.up|> ServicioClima
+
+
+interface AccuWeatherAPI { 
+    getWeather(city)
+}
+
+ServicioClimaAccuWeatherAPI .> AccuWeatherAPI
+
+class CondicionesClimaticas {
+    temperatura
+    probabilidadLluvia
+}
+
+ServicioClima -up.> CondicionesClimaticas
+
+
+' QUINTA ITERACION
+
+abstract class Guardarropas{
+    usuarios
+    prendas
+    modificacionesPropuestas
+    historialModificaciones
+    
+    proponerModificacion(modificacion)
+    aceptarModificacion(modificacion)
+    rechazarModificacion(modificacion)
+}
+
+class GuardarropasViajes{
+    prendas
+}
+
+class GuardarropasEntrecasa{
+    prendas
+}
+
+GuardarropasViajes -up-|> Guardarropas
+GuardarropasEntrecasa -up-|> Guardarropas
+
+
+interface ModificacionGuardarropas{
+    ejecutar(guardarropas)
+    deshacer(guardarropas)
+}
+
+class AgregarPrenda { 
+    prenda
+    ejecutar(guardarropas)
+    deshacer(guardarropas)
+}
+
+class SacarPrenda { 
+    prenda
+    ejecutar(guardarropas)
+    deshacer(guardarropas)
+}
+
+AgregarPrenda -.|> ModificacionGuardarropas
+SacarPrenda -.|> ModificacionGuardarropas
+
+Guardarropas -> "*" ModificacionGuardarropas
+
+class Usuario {
+    guardarropas
+}
+
+Usuario -down-> "*" Guardarropas
+Guardarropas -up-> "*" Usuario
+
+Guardarropas -up> "*" Prenda

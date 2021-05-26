@@ -1,0 +1,225 @@
+// Explicación/Aclaraciones
+
+// Pseudocodigo 
+
+class Prenda 
+	TipoPrenda tipo 
+	Material material
+	Color color
+	Color colorSecundario // opcional
+
+	Double temperaturaMaxima // maxima temperatura para usar una prenda
+
+	public Prenda(TipoPrenda tipo, Material material, Color color, Double temperaturaMaxima)
+		this.tipo = tipo
+		....
+
+	public Prenda(TipoPrenda tipo, Material material, Color color, Color colorSecundario, Double temperaturaMaxima)
+		this.tipo = tipo
+		...
+		this.colorSecundario = colorSecundario
+
+class TipoPrenda
+	String nombre
+	Categoria categoria
+
+enum Categoria
+	PARTE_SUPERIOR, PARTE_INFERIOR, CALZADO, ACCESORIOS
+
+class Atuendo
+	Prenda parteSuperior
+	Prenda parteInferior
+	Prenda calzado
+	List<Prenda> accesorios
+
+class Material
+	TipoMaterial tipoMaterial
+	Trama trama
+
+enum TipoMaterial
+	ALGODON, JEAN, CUERO
+
+enum Trama
+	LISA, RAYADA, CON_LUNARES, A_CUADROS, ESTAMPADO
+
+// Clase Color para manejar los colores en rgb (Correcion 1º iteracion)
+class Color
+	Integer r
+	Integer g
+	Integer b
+
+
+// Borrador: builder de Prenda
+
+class Borrador 
+	TipoPrenda tipo 
+	Material material
+	Color color
+	Color colorSecundario // opcional
+
+	// devuelve this para interfaz fluida
+	public Borrador especificarTipoPrenda(TipoPrenda tipo)
+		this.tipo = tipo
+
+	public Borrador especificarMaterial(Material material)
+		this.material = material
+
+	public Borrador especificarColor(Color color)
+	this.color = color;
+
+	public Borrador especificarColorSecundario(Color colorSecundario)
+		this.colorSecundario = colorSecundario
+
+	public Prenda crearPrenda()
+		return new Prenda(this.tipo, this.material, this.color, this.colorSecundario)
+
+
+class Uniforme
+	Prenda parteSuperior
+	Prenda parteInferior
+	Prenda calzado
+
+
+abstract class Sastre
+
+	public Uniforme fabricarUniforme(){
+		return new Uniforme(
+			this.fabricarParteSuperior,
+			this.fabricarParteInferior,
+			this.fabricarCalzado)
+	}
+
+	protected abstract fabricarParteSuperior();
+
+	protected abstract fabricarParteInferior();
+
+	protected abstract fabricarCalzado();
+
+class SastreSanJuan extends Sastre
+	
+	public Prenda fabricarParteSuperior(){
+		... // crear prenda a traves de borrador
+		return borrador.crearPrenda()
+	}
+
+
+	public Prenda fabricarParteInferior(){
+		... // crear prenda a traves de borrador
+		return borrador.crearPrenda()
+	}
+
+
+	public Prenda fabricarCalzado(){
+		... // crear prenda a traves de borrador
+		return borrador.crearPrenda()
+	}
+
+// Se pueden ir agregando Sastres segun instituciones
+
+class SastreJohnson extends Sastre
+	
+	public Prenda fabricarParteSuperior()
+
+	public Prenda fabricarParteInferior()
+
+	public Prenda fabricarCalzado()
+
+
+// Recomendador de atuendos - Cuarta Iteracion
+
+class RecomendadorAtuendos 
+	
+	public Atuendo sugerirAtuendo()
+		// sugerira un atuendo segun las condiciones climaticas
+
+
+class CondicionesClimaticas 
+	Double temperatura
+	Double probabilidadLluvia
+
+
+interface ServicioClima
+	public CondicionesClimaticas obtenerCondicionesClimaticas()
+
+class ServicioClimaAccuWeatherAPI implements IServicioClima
+	
+	String ciudad
+	AccuWeatherAPI climaAPI
+
+	// Inyecto dependencia para poder testear
+	public ServicioClimaAccuWeatherAPI(String ciudad, AccuWeatherAPI api)
+		this.ciudad = ciudad
+		this.climaAPI = api
+
+	public CondicionesClimaticas obtenerCondicionesClimaticas()
+		response = climaAPI.getWeather(this.ciudad)
+		return this.parseDataToCondicionesClimaticas(response)
+
+	private CondicionesClimaticas parseDataToCondicionesClimaticas(List<Map<String, Object> accuWeatherData)
+		CondicionesClimaticas condicionesClimaticas = new CondicionesClimaticas()
+		// agarra cada atributo del clima provisto por AccuWeather y lo pasa a 
+		// CondicionesClimaticas
+		return condicionesClimaticas 
+
+
+// Guardarropas - Quinta Iteracion
+
+abstract class Guardarropas
+	List<Usuario> usuarios
+	List<Prenda> prendas
+
+	List<ModificacionGuardarropas> modificacionesPropuestas
+
+	List<ModificacionGuardarropas> historialModificaciones
+
+	public proponerModificacion(ModificacionGuardarropas modificacion)
+		this.modificacionesPropuestas.add(modificacion)
+
+	public aceptarModificacion(ModificacionGuardarropas modificacion)
+		modificacion.ejecutar(this)
+
+	public rechazarModificacion(ModificacionGuardarropas modificacion)
+		this.modificacionesPropuestas.remove(modificacion)
+
+	public deshacerModificacion(ModificacionGuardarropas modificacion)
+		modificacion.deshacer(this)
+
+
+class GuardarropasViajes extends Guardarropas
+	List<Prenda> prendas
+
+class GuardarropasEntrecasa extends Guardarropas
+	List<Prenda> prendas
+
+
+class Usuario
+	List<Guardarropa> guardarropas
+
+
+interface ModificacionGuardarropas
+	
+	ejecutar(Guardarropas guardarropas)
+
+	deshacer(Guardarropas guardarropas)
+
+
+class AgregarPrenda implements ModificacionGuardarropas
+
+	Prenda prenda
+
+	ejecutar(Guardarropas guardarropas)
+		guardarropas.agregarPrenda(this.prenda)
+
+	deshacer(Guardarropas guardarropas)
+		guardarropas.eliminarPrenda(this.prenda)
+
+
+class SacarPrenda implements ModificacionGuardarropas
+
+	Prenda prenda
+
+	ejecutar(Guardarropas guardarropas)
+		guardarropas.eliminarPrenda(this.prenda)
+
+	deshacer(Guardarropas guardarropas)
+		guardarropas.agregarPrenda(this.prenda)
