@@ -1,0 +1,125 @@
+@startuml
+
+title Diagrama de Clases (Parte Alertas)
+
+@enduml
+
+class Usuario {
+    sugerenciaDiaria
+    alertasObservers
+    
+    agregarAlertaObserver(observer)
+    notificarAlerta(alerta)
+    actualizarSugerenciaDiaria(alerta)
+}
+
+class Atuendo {
+    parteSuperior
+    parteInferior
+    calzado
+    accesorios
+}
+
+Usuario -> Atuendo
+Usuario -.> RecomendadorAtuendos
+
+
+class RecomendadorAtuendos {
+    sugerirAtuendoPara(clima)
+}
+
+RecomendadorAtuendos -right.> Atuendo
+
+class AlertaMeteorologica {
+    clima
+    tipo
+    descripcion
+}
+
+enum TipoAlerta {
+    TORMENTA, GRANIZO
+}
+
+AlertaMeteorologica -> TipoAlerta
+
+interface ServicioClima {
+    obtenerCondicionesClimaticas()
+	obtenerUltimasAlertas()
+	actualizarAlertas()
+}
+
+RecomendadorAtuendos -left.> ServicioClima
+
+
+class ServicioClimaAccuWeatherAPI {
+    ciudad
+    observers
+    alertas
+    
+    obtenerCondicionesClimaticas()
+    actualizarAlertas()
+    obtenerUltimasAlertas()
+}
+
+ServicioClimaAccuWeatherAPI -.> AlertaMeteorologica
+
+abstract class AlertaMeteorologicaObserver{
+    usuario
+    
+    {abstract}alertaMeteorologica(alerta)
+    notificarAlerta(alerta)
+}
+
+ServicioClimaAccuWeatherAPI -> "*" AlertaMeteorologicaObserver
+
+class SugerenciaObserver {
+    alertaMeteorologica(alerta)
+}
+class TormentaObserver {
+    alertaMeteorologica(alerta)
+}
+class GranizoObserver {
+    alertaMeteorologica(alerta)
+}
+
+SugerenciaObserver -u.|> AlertaMeteorologicaObserver
+TormentaObserver -u.|> AlertaMeteorologicaObserver
+GranizoObserver -u.|> AlertaMeteorologicaObserver
+
+
+ServicioClimaAccuWeatherAPI -.up|> ServicioClima
+
+
+interface AccuWeatherAPI { 
+    getWeather(city)
+}
+
+ServicioClimaAccuWeatherAPI .left> AccuWeatherAPI
+
+class CondicionesClimaticas {
+    temperatura
+    probabilidadLluvia
+}
+
+ServicioClima -up.> CondicionesClimaticas
+
+
+interface Notificador {
+    notificar(usuario, alerta)
+}
+
+class NotificacionPorPantalla {
+    notificationService
+    notificar(usuario, alerta)
+}
+
+class NotificacionPorMail {
+    mailSender
+    notificar(usuario, alerta)
+}
+
+NotificacionPorPantalla -.> Notificador
+NotificacionPorMail -.> Notificador
+
+Usuario -> "*" Notificador
+Usuario -> "*" AlertaMeteorologicaObserver
