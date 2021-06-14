@@ -231,135 +231,138 @@ class SacarPrenda implements ModificacionGuardarropas
 class Usuario
 
 	// Se agrega:
-	Atuendo sugerenciaDiaria
-	List<AlertaMeteorologicaObserver> alertasObservers
-
-	List<Notificador> notificadores;
+	Atuendo sugerenciaDiaria;
+	List<AlertaMeteorologicaObserver> alertasObservers;
 
 	public void agregarAlertaObserver(AlertaMeteorologicaObserver observer){
-		observer.setUsuario(this)
 		this.alertasObservers.add(observer);
 	}
 
-	public void notificarAlerta(AlertaMeteorologica alerta){
-		notificadores.forEach(n -> n.notificar(this, alerta.descripcion))
+	public void hayAlertas(List<AlertaMeteorologica> alertas){
+		this.alertasObservers.forEach(observer -> observer.hayAlertas(this, alertas))
 	}
 
 	public void actualizarSugerenciaDiaria(AlertaMeteorologica alerta){
 		this.sugerenciaDiaria = this.recomendadorAtuendos.sugerirAtuendoPara(alerta.clima);
 	}
 
-
+	public void sugerenciaDiaria(){
+		this.sugerenciaDiaria = this.recomendadorAtuendos.sugerirAtuendo(guardarropas);
+	}
 
 
 class AlertaMeteorologica
 	CondicionesClimaticas clima
 	TipoAlerta tipo
 	String descripcion
-	// TipoNotificacion tipoNotificacion Depende de la alerta o de config de usuario?
 
 enum TipoAlerta
 	TORMENTA, GRANIZO
 
-enum TipoNotificacion
-	MAIL, NOTIFICACION
-
 interface ServicioClima
 	public CondicionesClimaticas obtenerCondicionesClimaticas()
-	public List<AlertaMeteorologica> obtenerUltimasAlertas()
-	public void actualizarAlertas()
+	public List<AlertaMeteorologica> obtenerAlertas()
 
 
-// ServicioClima tendria que ser clase abstracta para manejar observers desde ahi?
-// O esta bien que lo haga ServicioClimaAccuWeatherAPI ?
-
-class ServicioClimaAccuWeatherAPI implements ServicioClima
-	
-	List<AlertaMeteorologicaObserver> observers;
+class RepositorioAlertasMeteorologicas 
 
 	List<AlertaMeteorologica> alertas;
 
+	ServicioClima servicioClima; // para inyectar 
+
+	// Este metodo podria estar en otro objeto TareaActualizarAlertas por ejemplo
 	public void actualizarAlertas(){
-		AlertaMeteorologica alerta = this.obtenerAlertaMeteorologica()
-		this.alertas.add(alerta)
-		this.observers.forEach(observer -> observer.alertaMeteorologica(alerta))
-	}
+		this.alertas = this.servicioClima.obtenerAlertas()
 
-	private AlertaMeteorologica obtenerAlertaMeteorologica()
-		response = climaAPI.getAlertas(this.ciudad)
-		return this.parseDataToAlerta(response)
-
-	private AlertaMeteorologica parseDataToAlerta(Map<String, List<String> data){
-		AlertaMeteorologica alerta = new AlertaMeteorologica()
-		// Operaciones para parsear
-		//
-		return alerta;
-	}
-
-	public List<AlertaMeteorologica> obtenerUltimasAlertas(){
-		return this.alertas;
+		RepositorioUsuarios.getInstance().getUsuarios().forEach(usuario -> {
+			usuario.hayAlertas(this.alertas);
+		})
+		
 	}
 
 
-// interface AlertaMeteorologicaObserver
-//	public alertaMeteorologica(alerta)
 
-// Hago AlertaMeteorologicaObserver clase abstracta para notificar siempre
-// que surgio una alerta
-
-abstract class AlertaMeteorologicaObserver 
-
-	Usuario usuario
-
-	public alertaMeteorologica(alerta){
-		this.notificarAlerta(alerta);
-	}
-
-	private notificarAlerta(alerta){
-		usuario.notificar(alerta) // Mandar mail o notificacion
-	}
-
+interface AlertaMeteorologicaObserver 
+	public hayAlertas(Usuario usuario, List<AlertaMeteorologica> alertas);
+	// tambien podria dividir las alertas en varios metodos:
+	// public hayTormenta, hayGranizo
+	// si hago eso, cada observer va a hacer algo en el metodo que quiera
+	// si hago hayAlertas, se tendria que fijar que tipo de alerta llega
+	// para ver si hacer algo o no
 
 class SugerenciaObserver extends AlertaMeteorologicaObserver
 
-	public alertaMeteorologica(alerta) { 
-		super(alerta);
-		usuario.actualizarSugerenciaDiaria(alerta)
+	public hayAlertas(Usuario usuario, List<AlertaMeteorologica> alertas) { 
+		usuario.actualizarSugerenciaDiaria(alertas)
 	}
 
-class TormentaObserver extends AlertaMeteorologicaObserver
+class NotificadorTormentaObserver extends AlertaMeteorologicaObserver
 
-	public alertaMeteorologica(alerta) { 
-		super(alerta);
-		// Ya se envia la alerta en el super, hacer algo mas? 
+	NotificationService notificationService;
+
+	public hayAlertas(Usuario usuario, List<AlertaMeteorologica> alertas) { 
+		this.notificationService.notify("Hay tormenta! Lleva paraguas")
 	}
 
-class GranizoObserver extends AlertaMeteorologicaObserver
+class NotificadorGranizoObserver extends AlertaMeteorologicaObserver
 
-	public alertaMeteorologica(alerta) { 
-		super(alerta);
-		// Ya se envia la alerta en el super, hacer algo mas? 
+	NotificationService notificationService;
+
+	public hayAlertas(Usuario usuario, List<AlertaMeteorologica> alertas) { 
+		this.notificationService.notify("Hay granizo! Evita salir en auto")
 	}
 
 
+// Para requerimiento:
+// Como usuarie de QueMePongo quiero poder recibir un mail avisándome 
+// si se generó algún alerta meteorológico y cuál
+class NotificadorAlertaObserver extends AlertaMeteorologicaObserver
 
-interface Notificador
-	public void notificar(Usuario usuario, AlertaMeteorologica alerta);
+	MailSender mailSender;
 
-class NotificacionPorPantalla implements Notificador
+	public hayAlertas(Usuario usuario, List<AlertaMeteorologica> alertas) { 
+		this.mailSender.send(usuario.getEmail(), "Nueva alerta meteorologica...")
+	}
 
-	private NotificacionService notificationService;
+
+// El usuario puede elegir que eventos prestar atencion, por ejemplo:
+usuario.agregarAlertaObserver(new SugerenciaObserver())
+usuario.agregarAlertaObserver(new NotificadorTormentaObserver())
+
+
+// Se necesita el repositorio porque dice que una persona va a disparar
+// la accion de actualizar la sugerencia de todos los usuarios
+class RepositorioUsuarios 
+	List<Usuario> usuarios
+
+	// A futuro esto tendria que estar en otra clase porque no es responsabilidad
+	// del repo hacer cosas, solamente tiene que tener muchas instancias de un objeto
+	// y puede devolverlas todas o segun algun criterio/filtro.
+	// Por ej: podria estar en una clase TareaAsginacionDiaria / TareaSugerenciaDiaria
+	public void actualizarSugerenciasDiarias(){
+		this.usuarios.forEach(usuario -> usuario.sugerenciaDiaria())
+	}
+
+
+// Separando la tarea del repositorio (Tendria que ser asi)
+class TareaSugerenciaDiaria
 	
-	public void notificar(Usuario usuario, AlertaMeteorologica alerta){
-		notificationService.notify(alerta.descripcion);
+	public void enviarSugerenciasDiarias(){
+		RepositorioUsuarios.getInstance().getUsuarios().forEach(usuario -> {
+			usuario.sugerenciaDiaria()
+		})
 	}
 
 
-class NotificacionPorMail implements Notificador
+class ServicioClimaAccuWeatherAPI implements ServicioClima
 
-	private MailSender mailSender;
-	
-	public void notificar(Usuario usuario, AlertaMeteorologica alerta){
-		mailSender.send(usuario.email, alerta.descripcion);
+	private List<AlertaMeteorologica> obtenerAlertas()
+		response = climaAPI.getAlertas(this.ciudad)
+		return this.parseDataToAlerta(response)
+
+	private List<AlertaMeteorologica> parseDataToAlerta(Map<String, List<String> data){
+		List<AlertaMeteorologica> alertas;
+		// Operaciones para parsear
+		//
+		return alertas;
 	}
-	

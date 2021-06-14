@@ -9,7 +9,7 @@ class Usuario {
     alertasObservers
     
     agregarAlertaObserver(observer)
-    notificarAlerta(alerta)
+    hayAlertas(alertas)
     actualizarSugerenciaDiaria(alerta)
 }
 
@@ -44,8 +44,7 @@ AlertaMeteorologica -> TipoAlerta
 
 interface ServicioClima {
     obtenerCondicionesClimaticas()
-	obtenerUltimasAlertas()
-	actualizarAlertas()
+	obtenerAlertas()
 }
 
 RecomendadorAtuendos -left.> ServicioClima
@@ -63,28 +62,27 @@ class ServicioClimaAccuWeatherAPI {
 
 ServicioClimaAccuWeatherAPI -.> AlertaMeteorologica
 
-abstract class AlertaMeteorologicaObserver{
-    usuario
-    
-    {abstract}alertaMeteorologica(alerta)
-    notificarAlerta(alerta)
+interface AlertaMeteorologicaObserver{
+    hayAlertas(usuario, alerta)
 }
-
-ServicioClimaAccuWeatherAPI -> "*" AlertaMeteorologicaObserver
 
 class SugerenciaObserver {
-    alertaMeteorologica(alerta)
+    hayAlertas(usuario, alerta)
 }
-class TormentaObserver {
-    alertaMeteorologica(alerta)
+class NotificadorTormentaObserver {
+    hayAlertas(usuario, alerta)
 }
-class GranizoObserver {
-    alertaMeteorologica(alerta)
+class NotificadorGranizoObserver {
+    hayAlertas(usuario, alerta)
+}
+class NotificadorAlertaObserver {
+    hayAlertas(usuario, alerta)
 }
 
 SugerenciaObserver -u.|> AlertaMeteorologicaObserver
-TormentaObserver -u.|> AlertaMeteorologicaObserver
-GranizoObserver -u.|> AlertaMeteorologicaObserver
+NotificadorTormentaObserver -u.|> AlertaMeteorologicaObserver
+NotificadorGranizoObserver -u.|> AlertaMeteorologicaObserver
+NotificadorAlertaObserver -u.|> AlertaMeteorologicaObserver
 
 
 ServicioClimaAccuWeatherAPI -.up|> ServicioClima
@@ -103,23 +101,21 @@ class CondicionesClimaticas {
 
 ServicioClima -up.> CondicionesClimaticas
 
+Usuario -down--> "*" AlertaMeteorologicaObserver
 
-interface Notificador {
-    notificar(usuario, alerta)
+
+class RepositorioUsuarios{
+    usuarios
 }
 
-class NotificacionPorPantalla {
-    notificationService
-    notificar(usuario, alerta)
+class RepositorioAlertasMeteorologicas{
+    alertas
+    servicioClima
+    actualizarAlertas()
 }
 
-class NotificacionPorMail {
-    mailSender
-    notificar(usuario, alerta)
-}
+RepositorioUsuarios -> "*" Usuario
 
-NotificacionPorPantalla -.> Notificador
-NotificacionPorMail -.> Notificador
+RepositorioAlertasMeteorologicas -down.> RepositorioUsuarios
+RepositorioAlertasMeteorologicas ---> ServicioClima
 
-Usuario -> "*" Notificador
-Usuario -> "*" AlertaMeteorologicaObserver
